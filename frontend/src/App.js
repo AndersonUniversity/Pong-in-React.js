@@ -1,24 +1,29 @@
+//frontend/src/App.js
+// the main container component
+
+// standard react components
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+// bring in other components
 import './App.css';
+import Home from './components/Home';
+import MenuBar from './components/MenuBar';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* The BrowserRouter package gives us the Single Page Application (SPA)
+       * functionality, so we can use routes in the URL. */}
+      <BrowserRouter>
+        {/* Show the MenuBar component on all pages */}
+        <MenuBar />
+
+        {/* these components are only shown with a route in the URL */}
+        <Switch>
+          <Route path="/" exact component={Home} />
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }
