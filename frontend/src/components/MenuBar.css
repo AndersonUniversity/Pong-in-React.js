@@ -1,0 +1,22 @@
+.MenuBar {
+  background-color: #8fb9a8;
+  min-height: 10vh;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+/* unvisited link */
+.link {
+  padding-left: 1em;
+  padding-right: 2em;
+  columns: #fcd0ba;
+}
+/* mouse over link */
+.link:visited {
+  color: #fcd0ba;
+  text-decoration: none;
+}
+/* mouse over link */
+.link:hover {
+  color: #fefad4;
+  text-decoration: none;
+}
