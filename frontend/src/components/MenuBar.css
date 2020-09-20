@@ -1,6 +1,6 @@
 .MenuBar {
   background-color: #8fb9a8;
-  min-height: 10vh;
+  height: 10%;
   font-size: calc(10px + 2vmin);
   color: black;
 }

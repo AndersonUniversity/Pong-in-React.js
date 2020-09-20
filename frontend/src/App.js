@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Home from './components/Home';
 import MenuBar from './components/MenuBar';
+import Game from './components/Game';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         {/* these components are only shown with a route in the URL */}
         <Switch>
           <Route path="/" exact component={Home} />
+          <Route path="/game" component={Game} />
         </Switch>
       </BrowserRouter>
     </div>
