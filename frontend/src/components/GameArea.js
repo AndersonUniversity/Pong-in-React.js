@@ -8,11 +8,7 @@ import React from 'react';
 import './GameArea.css';
 
 const GameArea = () => {
-  return (
-    <div className="GameArea">
-      <h1 className="display-3">The board</h1>
-    </div>
-  );
+  return <div className="GameArea"></div>;
 };
 
 export default GameArea;
