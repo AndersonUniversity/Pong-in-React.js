@@ -2,5 +2,8 @@
   background-color: #fefad4;
   height: 80%;
   width: 80%;
-  color: black;
+  position: relative;
+  margin: 0 auto;
+  background-size: 50%;
+  background-image: linear-gradient(90deg, #765d69 1px, transparent 1px);
 }
