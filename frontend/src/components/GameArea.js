@@ -13,7 +13,8 @@ import './GameArea.css';
 const GameArea = () => {
   return (
     <div className="GameArea">
-      <Paddle x={10} y={200} />
+      <Paddle x={10} y={150} />
+      <Paddle x={1045} y={350} />
     </div>
   );
 };
