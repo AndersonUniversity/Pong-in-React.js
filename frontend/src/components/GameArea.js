@@ -28,6 +28,33 @@ const GameArea = () => {
   const [pWidth, setPWidth] = useState(0);
   const [pHeight, setPHeight] = useState(0);
 
+  // this is executed when the page is first loaded / unloaded
+  // add event listeners to detect keystrokes
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.keyCode === 90) {
+        // 'z'
+        console.log('z Key');
+      } else if (event.keyCode === 65) {
+        // 'a'
+        console.log('a Key');
+      } else if (event.keyCode === 38) {
+        // up arrow
+        console.log('up Key');
+      } else if (event.keyCode === 40) {
+        // down arrow
+        console.log('down Key');
+      } else {
+        console.log(event.keyCode);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+
   // what to execute when the screen is reloaded with a new size
   // executed once at the start, and then if [gameWidth, gameHeight] change
   useEffect(() => {
