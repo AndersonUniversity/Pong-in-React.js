@@ -11,7 +11,7 @@ import './Paddle.css';
 // with x and y locations
 const Paddle = (props) => {
   // TODO:  error handling on props
-  const { x, y } = props; // props is expecting two numbers
+  const { x, y, w, h } = props; // props is expecting two numbers
 
   return (
     // Draw the Paddle in the proper location, specified by the x/y position
@@ -20,6 +20,8 @@ const Paddle = (props) => {
       style={{
         left: `${x}px`,
         top: `${y}px`,
+        width: `${w}px`,
+        height: `${h}px`,
       }}
     />
   );

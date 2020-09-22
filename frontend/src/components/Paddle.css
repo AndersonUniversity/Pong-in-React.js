@@ -1,6 +1,4 @@
 .Paddle {
   background-color: #f1828d;
-  height: 15%;
-  width: 1%;
   position: absolute;
 }
