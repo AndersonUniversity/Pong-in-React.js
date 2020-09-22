@@ -7,7 +7,6 @@ one of the earliest Arcade games, released in 1972.
 
 # Future Features
 
-- add paddles to the game
 - allow the players to control the movement of each paddle separately
 - add the ball to the game and make it move
 - make the ball bounce off the paddles and change direction
