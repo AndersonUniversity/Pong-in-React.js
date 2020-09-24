@@ -32,7 +32,8 @@ const GameArea = () => {
   const [stepY, setStepY] = useState(0); // amount to move with each keypress
 
   // what to execute when the screen is reloaded with a new size
-  // executed once at the start, and then if [gameWidth, gameHeight] change
+  // executed once at the start, since there are [] for the last
+  // argument of useEffect
   useEffect(() => {
     // find out size of parent component (App.js)
     var parentElement = document.querySelector('.GameArea');
@@ -42,30 +43,41 @@ const GameArea = () => {
     setGameHeight(parentElement.offsetHeight);
 
     // set the dimensions of the paddles
-    setPWidth(paddleWidthPercent * gameWidth);
-    setPHeight(paddleHeightPercent * gameHeight);
+    setPWidth(paddleWidthPercent * parentElement.offsetWidth);
+    setPHeight(paddleHeightPercent * parentElement.offsetHeight);
 
     // set the step that we'll move each time the button is pressed
-    setStepY(paddleHeightPercent * gameHeight * stepSizePercent);
+    setStepY(
+      paddleHeightPercent * parentElement.offsetHeight * stepSizePercent
+    );
 
     // set the position of the paddles
     // (x,y) mark the upper left corner of the paddles
-    setLeftx(paddleWidthPercent * gameWidth);
-    setLefty(0.2 * gameHeight);
-    setRightx(gameWidth - 2 * paddleWidthPercent * gameWidth);
-    setRighty(0.8 * gameHeight - paddleHeightPercent * gameHeight);
-  }, [gameWidth, gameHeight]);
+    setLeftx(paddleWidthPercent * parentElement.offsetWidth);
+    setLefty(0.2 * parentElement.offsetHeight);
+    setRightx(
+      parentElement.offsetWidth -
+        2 * paddleWidthPercent * parentElement.offsetWidth
+    );
+    setRighty(
+      0.8 * parentElement.offsetHeight -
+        paddleHeightPercent * parentElement.offsetHeight
+    );
+  }, []);
 
   // functions to move paddles down
   // y is either lefty or righty
   // sety is either the function setLefty or setRighty
   const moveDown = (y, sety) => {
     console.log('gh', gameHeight, 'ph', pHeight, 'y', y);
-    if (y < gameHeight + pHeight) {
+    if (y + stepY < gameHeight - pHeight) {
       // check that we are not off the bottom
       // if so, move down by our stepY
       sety(y + stepY);
-    } // otherwise, don't change the y value downward
+    } else {
+      // otherwise, set y so the bottom is on the edge
+      sety(gameHeight - pHeight);
+    }
   };
 
   // functions to move paddles up
@@ -111,7 +123,9 @@ const GameArea = () => {
     return () => {
       window.removeEventListener('keydown', handleEsc);
     };
-  }, [lefty, moveUp, moveDown]);
+  }, [lefty, righty, moveUp, moveDown]);
+  // TODO:  there are some warnings with moveUp and moveDown that need to be eliminated
+  // I think the event listeners may need to be in the other useEffect to be most efficient
 
   return (
     <div className="GameArea">
