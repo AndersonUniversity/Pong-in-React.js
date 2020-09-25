@@ -6,8 +6,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-// import paddles
+// import paddles and ball
 import Paddle from './Paddle';
+import Ball from './Ball';
 
 // style for this page
 import './GameArea.css';
@@ -39,6 +40,11 @@ const GameArea = () => {
   const [pWidth, setPWidth] = useState(0); // width of the paddle
   const [pHeight, setPHeight] = useState(0); // height of the paddle
   const [stepY, setStepY] = useState(0); // amount to move with each keypress
+
+  // constants for the ball's position
+  const [ballx, setBallx] = useState(0); // ball's x position (upper left corner)
+  const [bally, setBally] = useState(0); // ball's y position (upper left corner)
+  const [ballSize, setBallSize] = useState(0); // ball's width/height (it's square)
 
   // what to execute when the screen is reloaded with a new size
   // executed once at the start, since there are [] for the last
@@ -82,6 +88,13 @@ const GameArea = () => {
         (parentElement.offsetHeight -
           paddleHeightPercent * parentElement.offsetHeight)
     );
+
+    // set the ball's starting position
+    setBallx(0.5 * parentElement.offsetWidth);
+    setBally(0.5 * parentElement.offsetHeight);
+
+    // set ball's starting size -- same width as the paddle
+    setBallSize(paddleWidthPercent * parentElement.offsetWidth);
   }, []);
 
   // this is the function that handles the keydown event
@@ -187,6 +200,7 @@ const GameArea = () => {
     <div className="GameArea">
       <Paddle x={leftx} y={lefty} w={pWidth} h={pHeight} />
       <Paddle x={rightx} y={righty} w={pWidth} h={pHeight} />
+      <Ball x={ballx} y={bally} size={ballSize} />
     </div>
   );
 };
