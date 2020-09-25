@@ -1,5 +1,6 @@
 // src/components/GameArea.js
-// the Game area for Pong
+// This component draws the gamearea, and also handles the movement of
+// the other components inside the game area, such as the paddles
 
 // standard react components
 import React from 'react';
@@ -22,6 +23,8 @@ const GameArea = () => {
   const paddleWidthPercent = 0.01; // paddle is 1% of gamearea wide
   const paddleHeightPercent = 0.15; // paddle is 15% of gamearea tall
   const stepSizePercent = 0.1; // each movement of the paddle is 10% of the paddle height
+  const paddleSpace = 2; // blank space "behind" the paddle, multipls of paddle width
+  const initialPosition = 0.5; // initial position, percent of gameHeight from top/bottom
 
   // variables to store calculated size of playing field
   const [gameWidth, setGameWidth] = useState(0);
@@ -40,6 +43,10 @@ const GameArea = () => {
   // what to execute when the screen is reloaded with a new size
   // executed once at the start, since there are [] for the last
   // argument of useEffect
+  // NOTE:  in this function, we can call something like setGameWidth,
+  // and it will work ... except that the value of gameWidth is not set
+  // immediately -- it is queued to be set when this function exits.  This
+  // is why we have all the long formulas that reuse parentElement.offsetWidth, etc
   useEffect(() => {
     // find out size of parent component (App.js)
     var parentElement = document.querySelector('.GameArea');
@@ -59,23 +66,81 @@ const GameArea = () => {
 
     // set the position of the paddles
     // (x,y) mark the upper left corner of the paddles
+    // if initialPosition is not 0.5, the left paddle will start higher than the right
     setLeftx(paddleWidthPercent * parentElement.offsetWidth);
-    setLefty(0.2 * parentElement.offsetHeight);
+    setLefty(
+      initialPosition *
+        (parentElement.offsetHeight -
+          paddleHeightPercent * parentElement.offsetHeight)
+    );
     setRightx(
       parentElement.offsetWidth -
-        2 * paddleWidthPercent * parentElement.offsetWidth
+        paddleSpace * paddleWidthPercent * parentElement.offsetWidth
     );
     setRighty(
-      0.8 * parentElement.offsetHeight -
-        paddleHeightPercent * parentElement.offsetHeight
+      (1 - initialPosition) *
+        (parentElement.offsetHeight -
+          paddleHeightPercent * parentElement.offsetHeight)
     );
   }, []);
+
+  // this is the function that handles the keydown event
+  const handleKeyDown = (event) => {
+    // for the keys that we care about, set their value in the map to true
+    // when the key is pressed
+    if (event.keyCode === KEY_Z) {
+      keymap.z = true;
+    } else if (event.keyCode === KEY_A) {
+      keymap.a = true;
+    } else if (event.keyCode === KEY_UP) {
+      keymap.up = true;
+    } else if (event.keyCode === KEY_DOWN) {
+      keymap.down = true;
+    }
+    // since a key was pressed, move the objects
+    // TODO:  This will be moved to a timer loop later, when we get the ball
+    move();
+  };
+
+  // this is the function that handles the keyup event
+  const handleKeyUp = (event) => {
+    // for the keys that we care about, set their value in the map to false
+    // when the key is lifted
+    if (event.keyCode === KEY_Z) {
+      keymap.z = false;
+    } else if (event.keyCode === KEY_A) {
+      keymap.a = false;
+    } else if (event.keyCode === KEY_UP) {
+      keymap.up = false;
+    } else if (event.keyCode === KEY_DOWN) {
+      keymap.down = false;
+    }
+  };
+
+  // function that moves everything on the gamearea
+  const move = () => {
+    // check to see which keys are being held down
+    // and move the correct object relative to that key
+    // Note:  these need to be independent if's, because more than
+    // one can be true
+    if (keymap.z === true) {
+      moveDown(lefty, setLefty);
+    }
+    if (keymap.a === true) {
+      moveUp(lefty, setLefty);
+    }
+    if (keymap.up === true) {
+      moveUp(righty, setRighty);
+    }
+    if (keymap.down === true) {
+      moveDown(righty, setRighty);
+    }
+  };
 
   // functions to move paddles down
   // y is either lefty or righty
   // sety is either the function setLefty or setRighty
   const moveDown = (y, sety) => {
-    console.log('gh', gameHeight, 'ph', pHeight, 'y', y);
     if (y + stepY < gameHeight - pHeight) {
       // check that we are not off the bottom
       // if so, move down by our stepY
@@ -104,36 +169,19 @@ const GameArea = () => {
   // adds event listeners to detect keystrokes
   // includes the function that moves the paddles
   useEffect(() => {
-    // this is the function that handles the event we are listening for
-    const handleKeyDown = (event) => {
-      if (event.keyCode === KEY_Z) {
-        // 'z'
-        moveDown(lefty, setLefty);
-      } else if (event.keyCode === KEY_A) {
-        // 'a'
-        moveUp(lefty, setLefty);
-      } else if (event.keyCode === KEY_UP) {
-        // up arrow
-        console.log('up Key');
-        moveUp(righty, setRighty);
-      } else if (event.keyCode === KEY_DOWN) {
-        // down arrow
-        console.log('down Key');
-        moveDown(righty, setRighty);
-      } else {
-        console.log(event.keyCode);
-      }
-    };
+    // listen for these events, and go to the specified function
     window.addEventListener('keydown', handleKeyDown);
-
+    window.addEventListener('keyup', handleKeyUp);
+    // when done, unload the event listener
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [lefty, righty, moveUp, moveDown]);
-  // TODO:  there are some warnings with moveUp and moveDown that need to be eliminated
+  }, [lefty, righty]);
+  // TODO:  there are some warnings with handleKeyDown and handleKeyUp that need to be eliminated
   // I think the event listeners may need to be in the other useEffect to be most efficient
-  // I think if we change something here, we can get "holding down a and holding down up" to
-  // move both paddles at the same time
+  // but, if I move it up then it doesn't work -- the lefty and righty is always zero
+  // I think this may be fixed when the ball is added and we get a timing loop
 
   return (
     <div className="GameArea">
