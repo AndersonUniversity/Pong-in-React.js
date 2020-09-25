@@ -12,6 +12,12 @@ import Paddle from './Paddle';
 import './GameArea.css';
 
 const GameArea = () => {
+  const KEY_A = 65; // ascii code for lowercase a
+  const KEY_Z = 90; // ascii code for lowercase z
+  const KEY_UP = 38; // ascii code for up arrow
+  const KEY_DOWN = 40; // ascii code for down arrow
+  const keymap = { a: false, z: false, up: false, down: false }; // array of keys that are currently pressed
+
   // constants for paddle ratios
   const paddleWidthPercent = 0.01; // paddle is 1% of gamearea wide
   const paddleHeightPercent = 0.15; // paddle is 15% of gamearea tall
@@ -99,18 +105,18 @@ const GameArea = () => {
   // includes the function that moves the paddles
   useEffect(() => {
     // this is the function that handles the event we are listening for
-    const handleEsc = (event) => {
-      if (event.keyCode === 90) {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === KEY_Z) {
         // 'z'
         moveDown(lefty, setLefty);
-      } else if (event.keyCode === 65) {
+      } else if (event.keyCode === KEY_A) {
         // 'a'
         moveUp(lefty, setLefty);
-      } else if (event.keyCode === 38) {
+      } else if (event.keyCode === KEY_UP) {
         // up arrow
         console.log('up Key');
         moveUp(righty, setRighty);
-      } else if (event.keyCode === 40) {
+      } else if (event.keyCode === KEY_DOWN) {
         // down arrow
         console.log('down Key');
         moveDown(righty, setRighty);
@@ -118,14 +124,16 @@ const GameArea = () => {
         console.log(event.keyCode);
       }
     };
-    window.addEventListener('keydown', handleEsc);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [lefty, righty, moveUp, moveDown]);
   // TODO:  there are some warnings with moveUp and moveDown that need to be eliminated
   // I think the event listeners may need to be in the other useEffect to be most efficient
+  // I think if we change something here, we can get "holding down a and holding down up" to
+  // move both paddles at the same time
 
   return (
     <div className="GameArea">
