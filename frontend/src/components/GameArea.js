@@ -10,6 +10,14 @@ import { useState, useEffect } from 'react';
 import Paddle from './Paddle';
 import Ball from './Ball';
 
+// import functions to detect collision between ball and paddles
+import {
+  collideLeftPaddle,
+  collideRightPaddle,
+  getRandomValue,
+  getRandomSign,
+} from './gameLogic';
+
 // style for this page
 import './GameArea.css';
 
@@ -23,6 +31,8 @@ const GameArea = () => {
 
   // time step for rendering speed
   const TIME_STEP = 10; // in milliseconds between steps
+  const INI_SPEED_X_RANGE = 5; // initial ball speed will vary from 0 to +5, in x
+  const INI_SPEED_Y_RANGE = 2; // initial ball speed will vary, from 0 to 2, in y
 
   // constants for paddle ratios
   const paddleWidthPercent = 0.01; // paddle is 1% of gamearea wide
@@ -103,8 +113,8 @@ const GameArea = () => {
     setBallSize(paddleWidthPercent * parentElement.offsetWidth);
 
     // set ball's starting speed
-    setBallSpeedx(1);
-    setBallSpeedy(0);
+    setBallSpeedx(getRandomSign() * getRandomValue(1, INI_SPEED_X_RANGE));
+    setBallSpeedy(getRandomSign() * getRandomValue(0, INI_SPEED_Y_RANGE));
   }, []);
 
   // this is the function that handles the keydown event
@@ -166,24 +176,26 @@ const GameArea = () => {
     if (ballx + ballSpeedx > 0 && ballx + ballSpeedx < gameWidth - ballSize) {
       setBallx(ballx + ballSpeedx);
     } else if (ballx + ballSpeedx < 0) {
-      // TODO:  end turn, lose!
+      // if ball hits left edge of screen
       setBallx(0);
+      alert('You lose!'); // TODO: this is an infinite loop of alerts
     } else {
-      // if (ballx + ballSpeedx > gameWidth)
-      // TODO:  end turn, lose!
+      // if ball hits right edge of screen
       setBallx(gameWidth - ballSize);
+      alert('You lose!'); // TODO: this is an infinite loop of alerts
     }
 
     // add the speed to the position in y
     if (bally + ballSpeedy > 0 && bally + ballSpeedy < gameHeight - ballSize) {
       setBally(bally + ballSpeedy);
     } else if (bally + ballSpeedy < 0) {
-      // TODO:  bounce
-      setBally(0); // will stick to wall for now
+      // ball bounces off top edge
+      setBally(0); // don't go past edge
+      setBallSpeedy(-ballSpeedy); // reverse direction
     } else {
-      // if (bally + ballSpeedy > gameHeight)}
-      // TODO:  bounce
-      setBally(gameHeight - ballSize);
+      // if ball bounces off bottom edge
+      setBally(gameHeight - ballSize); // don't go past edge
+      setBallSpeedy(-ballSpeedy); // reverse direction
     }
   };
 
