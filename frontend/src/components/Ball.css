@@ -1,4 +1,5 @@
 .Ball {
   background-color: #f1828d;
+  border-radius: 50%;
   position: absolute;
 }

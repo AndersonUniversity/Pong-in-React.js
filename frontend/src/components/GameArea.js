@@ -14,11 +14,15 @@ import Ball from './Ball';
 import './GameArea.css';
 
 const GameArea = () => {
+  // constants related to keys
   const KEY_A = 65; // ascii code for lowercase a
   const KEY_Z = 90; // ascii code for lowercase z
   const KEY_UP = 38; // ascii code for up arrow
   const KEY_DOWN = 40; // ascii code for down arrow
   const keymap = { a: false, z: false, up: false, down: false }; // array of keys that are currently pressed
+
+  // time step for rendering speed
+  const TIME_STEP = 10; // in milliseconds between steps
 
   // constants for paddle ratios
   const paddleWidthPercent = 0.01; // paddle is 1% of gamearea wide
@@ -42,9 +46,11 @@ const GameArea = () => {
   const [stepY, setStepY] = useState(0); // amount to move with each keypress
 
   // constants for the ball's position
+  const [ballSize, setBallSize] = useState(0); // ball's width/height (it's square)
   const [ballx, setBallx] = useState(0); // ball's x position (upper left corner)
   const [bally, setBally] = useState(0); // ball's y position (upper left corner)
-  const [ballSize, setBallSize] = useState(0); // ball's width/height (it's square)
+  const [ballSpeedx, setBallSpeedx] = useState(0); // ball's x speed (pixels/time step)
+  const [ballSpeedy, setBallSpeedy] = useState(0); // ball's y speed
 
   // what to execute when the screen is reloaded with a new size
   // executed once at the start, since there are [] for the last
@@ -95,6 +101,10 @@ const GameArea = () => {
 
     // set ball's starting size -- same width as the paddle
     setBallSize(paddleWidthPercent * parentElement.offsetWidth);
+
+    // set ball's starting speed
+    setBallSpeedx(1);
+    setBallSpeedy(0);
   }, []);
 
   // this is the function that handles the keydown event
@@ -110,9 +120,6 @@ const GameArea = () => {
     } else if (event.keyCode === KEY_DOWN) {
       keymap.down = true;
     }
-    // since a key was pressed, move the objects
-    // TODO:  This will be moved to a timer loop later, when we get the ball
-    move();
   };
 
   // this is the function that handles the keyup event
@@ -132,6 +139,9 @@ const GameArea = () => {
 
   // function that moves everything on the gamearea
   const move = () => {
+    // move the ball first
+    moveBall();
+
     // check to see which keys are being held down
     // and move the correct object relative to that key
     // Note:  these need to be independent if's, because more than
@@ -150,9 +160,35 @@ const GameArea = () => {
     }
   };
 
+  // function that moves the ball
+  const moveBall = () => {
+    // add the speed to the position in x
+    if (ballx + ballSpeedx > 0 && ballx + ballSpeedx < gameWidth - ballSize) {
+      setBallx(ballx + ballSpeedx);
+    } else if (ballx + ballSpeedx < 0) {
+      // TODO:  end turn, lose!
+      setBallx(0);
+    } else {
+      // if (ballx + ballSpeedx > gameWidth)
+      // TODO:  end turn, lose!
+      setBallx(gameWidth - ballSize);
+    }
+
+    // add the speed to the position in y
+    if (bally + ballSpeedy > 0 && bally + ballSpeedy < gameHeight - ballSize) {
+      setBally(bally + ballSpeedy);
+    } else if (bally + ballSpeedy < 0) {
+      // TODO:  bounce
+      setBally(0); // will stick to wall for now
+    } else {
+      // if (bally + ballSpeedy > gameHeight)}
+      // TODO:  bounce
+      setBally(gameHeight - ballSize);
+    }
+  };
+
   // functions to move paddles down
-  // y is either lefty or righty
-  // sety is either the function setLefty or setRighty
+  // y is either lefty or righty, sety is either setLefty() or setRighty()
   const moveDown = (y, sety) => {
     if (y + stepY < gameHeight - pHeight) {
       // check that we are not off the bottom
@@ -165,8 +201,7 @@ const GameArea = () => {
   };
 
   // functions to move paddles up
-  // y is either lefty or righty
-  // sety is either the function setLefty or setRighty
+  // y is either lefty or righty, sety is either setLefty() or setRighty()
   const moveUp = (y, sety) => {
     if (y - stepY > 0) {
       // check that we are not off the bottom
@@ -178,23 +213,29 @@ const GameArea = () => {
     }
   };
 
-  // this is executed when the items in the [] at the end of the function change
-  // adds event listeners to detect keystrokes
-  // includes the function that moves the paddles
+  // this is executed when the items in the [] change
+  // adds event listeners to detect keystrokes, also handles animation interval
   useEffect(() => {
     // listen for these events, and go to the specified function
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    // when done, unload the event listener
+
+    // start animating the motion, number is in milliseconds
+    // bug -- this accesses move when all ball values are zero
+    // if we put this in the other useEffect, we get multiple intervals executing
+    // in an infinite loop
+    const interval = setInterval(move, TIME_STEP);
+
+    // when done, unload the event listeners and stop the interval
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      clearInterval(interval);
     };
-  }, [lefty, righty]);
-  // TODO:  there are some warnings with handleKeyDown and handleKeyUp that need to be eliminated
-  // I think the event listeners may need to be in the other useEffect to be most efficient
-  // but, if I move it up then it doesn't work -- the lefty and righty is always zero
-  // I think this may be fixed when the ball is added and we get a timing loop
+  }, [lefty, righty, ballx, bally]);
+  // TODO:  there are some warnings with handleKeyDown and handleKeyUp and move that need to be eliminated
+  // I don't know why these things need to have a trigger with those dependencies in the [].
+  // if we put these in the other useEffect function, then these functions only see the original useState values
 
   return (
     <div className="GameArea">
