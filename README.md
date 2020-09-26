@@ -7,7 +7,6 @@ one of the earliest Arcade games, released in 1972.
 
 # Future Features
 
-- add the ball to the game and make it move
 - make the ball bounce off the paddles and change direction
 - if the ball goes off the edge, the other player gets the point
 - it would be nice to have a high-score board
@@ -15,3 +14,4 @@ one of the earliest Arcade games, released in 1972.
 # Buggy Aspects
 
 - the paddles are not yet BOTH moving at the same time
+- there is a warning message for GameArea.js in one of the useEffects
