@@ -154,7 +154,9 @@ const GameArea = () => {
         { x: leftx, y: lefty, width: pWidth, height: pHeight }
       ) === true
     ) {
-      alert('Collision with left paddle!!!!');
+      // collided with left paddle
+      setBallSpeedx(0 - ballSpeedx); // reverse direction
+      setBallx(ballx + ballSize); // move forward, outside the paddle
     }
     if (
       collideObjects(
@@ -162,7 +164,9 @@ const GameArea = () => {
         { x: rightx, y: righty, width: pWidth, height: pHeight }
       ) === true
     ) {
-      alert('Collision with right paddle!!!!');
+      // collided with right paddle
+      setBallSpeedx(0 - ballSpeedx); // reverse direction
+      setBallx(ballx - ballSize); // move backward, outside the paddle
     }
 
     // check to see which keys are being held down

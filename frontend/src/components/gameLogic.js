@@ -48,9 +48,8 @@ export const collideObjects = (first, second) => {
   ///////
   // there is a chance they overlap, so check the left edge
   if (first.x + first.width >= second.x && first.y + first.height >= second.y) {
-    console.log('COLLISION!');
     return true;
   }
 
-  console.log('we have a hole in the if logic in collideObjects');
+  console.log('ERROR:  We have a hole in the if logic in collideObjects');
 };
