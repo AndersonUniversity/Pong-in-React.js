@@ -7,7 +7,6 @@ one of the earliest Arcade games, released in 1972.
 
 # Future Features
 
-- make the ball bounce off the paddles and change direction
 - if the ball goes off the edge, the other player gets the point
 - it would be nice to have a high-score board
 
