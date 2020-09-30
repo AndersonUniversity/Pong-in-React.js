@@ -11,12 +11,7 @@ import Paddle from './Paddle';
 import Ball from './Ball';
 
 // import functions to detect collision between ball and paddles
-import {
-  collideLeftPaddle,
-  collideRightPaddle,
-  getRandomValue,
-  getRandomSign,
-} from './gameLogic';
+import { collideObjects, getRandomValue, getRandomSign } from './gameLogic';
 
 // style for this page
 import './GameArea.css';
@@ -151,6 +146,24 @@ const GameArea = () => {
   const move = () => {
     // move the ball first
     moveBall();
+
+    // check for collisions first (be mean to the user, ha!)
+    if (
+      collideObjects(
+        { x: ballx, y: bally, width: ballSize, height: ballSize },
+        { x: leftx, y: lefty, width: pWidth, height: pHeight }
+      ) === true
+    ) {
+      alert('Collision with left paddle!!!!');
+    }
+    if (
+      collideObjects(
+        { x: ballx, y: bally, width: ballSize, height: ballSize },
+        { x: rightx, y: righty, width: pWidth, height: pHeight }
+      ) === true
+    ) {
+      alert('Collision with right paddle!!!!');
+    }
 
     // check to see which keys are being held down
     // and move the correct object relative to that key
